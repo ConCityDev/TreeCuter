@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'pl.norbit'
-version = 'v2.3.1'
+version = 'v2.4.0'
 
 repositories {
     mavenCentral()
@@ -32,6 +32,12 @@ repositories {
         name = "playpro-repo"
         url = uri("https://maven.playpro.com")
     }
+    maven {
+        url =  'https://repo.momirealms.net/releases/'
+    }
+    maven {
+        url =  'https://repo.oraxen.com/releases'
+    }
 }
 
 dependencies {
@@ -42,7 +48,8 @@ dependencies {
     //bstats
     implementation 'org.bstats:bstats-bukkit:3.1.0'
     //glowing
-    implementation 'fr.skytasul:glowingentities:1.4.11'
+//    implementation 'fr.skytasul:glowingentities:1.4.11'
+    implementation 'fr.skytasul:glowingentities:2.0.0'
     //worldguard
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     //itemsadder
@@ -54,6 +61,12 @@ dependencies {
     //lombok
     compileOnly 'org.projectlombok:lombok:1.18.44'
     annotationProcessor 'org.projectlombok:lombok:1.18.44'
+
+    compileOnly('net.momirealms:craft-engine-core:26.7.1')
+    compileOnly('net.momirealms:craft-engine-bukkit:26.7.1')
+
+    compileOnly('io.th0rgal:oraxen:1.163.0:dev')
+    compileOnly files('libs/SCore-5.26.7.5.jar')
 }
 
 compileJava {options.encoding = "UTF-8"}
