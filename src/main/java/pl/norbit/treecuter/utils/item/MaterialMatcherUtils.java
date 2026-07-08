@@ -47,7 +47,7 @@ public class MaterialMatcherUtils {
         ItemType type = getType(namespace);
 
         return switch (type) {
-            case ITEMS_ADDER -> {
+            case ITEMSADDER -> {
                 if(!Settings.isItemsAdderEnabled()){
                     yield false;
                 }
@@ -71,6 +71,36 @@ public class MaterialMatcherUtils {
                 }
                 yield false;
             }
+
+            case EXECUTABLEITEMS -> {
+                if(!Settings.isExecutableItemsEnabled()){
+                    yield false;
+                }
+                if (itemStack != null) {
+                    yield ExecutableItemsUtils.isEqualItem(itemStack, id);
+                }
+                yield false;
+            }
+            case ORAXEN -> {
+                if(!Settings.isOraxenEnabled()){
+                    yield false;
+                }
+                if (itemStack != null) {
+                    yield OraxenUtils.isEqualItem(itemStack, id);
+                }
+                yield false;
+            }
+
+            case CRAFTENGINE -> {
+                if(!Settings.isCraftEngineEnabled()){
+                    yield false;
+                }
+                if (itemStack != null) {
+                    yield CraftEngineUtils.isEqualItem(itemStack, id);
+                }
+                yield false;
+            }
+
             case MINECRAFT -> {
                 Material mat = Material.getMaterial(id.toUpperCase());
                 yield mat != null && material == mat;
@@ -79,12 +109,17 @@ public class MaterialMatcherUtils {
     }
 
     private static ItemType getType(String namespace) {
-        if (namespace.equalsIgnoreCase("ia")) {
-            return ItemType.ITEMS_ADDER;
+        if (namespace.equalsIgnoreCase("ia") || namespace.equalsIgnoreCase("itemsadder") ) {
+            return ItemType.ITEMSADDER;
         } else if (namespace.equalsIgnoreCase("nexo")) {
             return ItemType.NEXO;
+        } else if (namespace.equalsIgnoreCase("oraxen")) {
+            return ItemType.ORAXEN;
+        } else if (namespace.equalsIgnoreCase("ei") || (namespace.equalsIgnoreCase("executableitems"))) {
+            return ItemType.EXECUTABLEITEMS;
+        } else if (namespace.equalsIgnoreCase("ce") || (namespace.equalsIgnoreCase("craftengine"))) {
+            return ItemType.CRAFTENGINE;
         }
-
         return ItemType.MINECRAFT;
     }
 }

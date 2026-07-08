@@ -73,6 +73,9 @@ public final class TreeCuter extends JavaPlugin {
         Settings.setWorldGuardEnabled(checkPlugin("WorldGuard"));
         Settings.setItemsAdderEnabled(checkPlugin("ItemsAdder"));
         Settings.setNexoAdderEnabled(checkPlugin("Nexo"));
+        Settings.setCraftEngineEnabled(checkPlugin("CraftEngine"));
+        Settings.setExecutableItemsEnabled(checkPlugin("ExecutableItems"));
+        Settings.setOraxenEnabled(checkPlugin("Oraxen"));
         Settings.setPlaceholderApiEnabled(checkPlugin("PlaceholderAPI"));
 
         if(Settings.isWorldGuardEnabled() || Settings.isItemsAdderEnabled()

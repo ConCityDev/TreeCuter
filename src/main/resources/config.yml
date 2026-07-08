@@ -70,9 +70,9 @@ mining-effect:
 # [!]
 # [!]                                                                                                               [!]
 # [!]       GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS:                                                        [!]
-# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11                                    [!]
+# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11, 26.1.x, 26.2                                    [!]
 # [!]                                                                                                               [!]
-# [!]                                                                                                               [!]                                                                                  [!]
+# [!]                                                                                                                     [!]                                                                                  [!]
 
 glowing-blocks: true
 # colors: black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple, gold, gray,
@@ -82,7 +82,7 @@ glowing-color: 'yellow'
 # [!]
 # [!]                                                                                                               [!]
 # [!]       GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS:                                                        [!]
-# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11                                    [!]
+# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11, 26.1.x, 26.2                                    [!]
 # [!]                                                                                                               [!]
 # [!]                                                                                                               [!]
 
@@ -134,6 +134,9 @@ wood-blocks:
     - 'NETHERITE_AXE'
     # - 'ia:example_item_id' # example for ItemsAdder
     # - 'nexo:example_item_id' # example for Nexo
+    # - 'ce:example_item_id' # example for CraftEngine
+    # - 'ei:example_item_id' # example for ExecutableItems
+    # - 'oraxen:example_item_id' # example for Oraxen
     accept-blocks:
     - 'OAK_LOG'
     - 'SPRUCE_LOG'

@@ -39,6 +39,18 @@ public class Settings {
 
     @Getter
     @Setter
+    private static boolean oraxenEnabled;
+
+    @Getter
+    @Setter
+    private static boolean craftEngineEnabled;
+
+    @Getter
+    @Setter
+    private static boolean executableItemsEnabled;
+
+    @Getter
+    @Setter
     private static boolean nexoAdderEnabled;
 
     @Getter

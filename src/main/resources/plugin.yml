@@ -9,6 +9,10 @@ softdepend:
   - ItemsAdder
   - PlaceholderAPI
   - CoreProtect
+  - ExecutableItems
+  - SCore
+  - CraftEngine
+  - Oraxen
 commands:
   treecuter:
     aliases:
