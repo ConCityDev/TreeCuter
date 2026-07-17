@@ -9,6 +9,8 @@ import pl.norbit.treecuter.commands.TreeCuterCommand;
 import pl.norbit.treecuter.config.Settings;
 import pl.norbit.treecuter.listeners.BlockBreakListener;
 import pl.norbit.treecuter.listeners.BlockInteractListener;
+import pl.norbit.treecuter.listeners.BlockStripListener;
+import pl.norbit.treecuter.listeners.ItemDamageListener;
 import pl.norbit.treecuter.listeners.TreeListeners;
 import pl.norbit.treecuter.listeners.UnglowListener;
 import pl.norbit.treecuter.placeholders.PlaceholderRegistry;
@@ -64,7 +66,9 @@ public final class TreeCuter extends JavaPlugin {
         pluginManager.registerEvents(new TreeListeners(), this);
         pluginManager.registerEvents(new BlockBreakListener(), this);
         pluginManager.registerEvents(new BlockInteractListener(), this);
+        pluginManager.registerEvents(new BlockStripListener(), this);
         pluginManager.registerEvents(new UnglowListener(), this);
+        pluginManager.registerEvents(new ItemDamageListener(), this);
     }
 
     private void checkPlugins(){

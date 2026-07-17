@@ -18,6 +18,19 @@ public class DurabilityUtils {
             return Settings.getMaxBlocks();
         }
 
+        // Check if item has usage rights
+        // Usage rights count USES not BLOCKS, so return max blocks per use
+        if(ToolUsageUtils.hasUsageRights(item)){
+            int remaining = ToolUsageUtils.getRemainingUsage(item);
+            if(remaining > 0){
+                // Return max blocks that can be cut per use, not remaining uses
+                return Settings.getMaxBlocks();
+            } else {
+                // No remaining uses, return 0
+                return 0;
+            }
+        }
+
 //        if(Settings.isItemsAdderEnabled()){
 //            int uses = ItemsAdderUtils.checkRemainUses(item);
 //
@@ -39,6 +52,13 @@ public class DurabilityUtils {
 
         if(meta.isUnbreakable()){
             return item;
+        }
+
+        // Check and update usage rights if item has them
+        if(ToolUsageUtils.hasUsageRights(item)){
+            // Item has no more usage rights or updated item
+            // Always increment by 1 for usage rights (counts uses, not blocks)
+            return ToolUsageUtils.incrementUsage(item, 1);
         }
 
 //        if(Settings.isItemsAdderEnabled()){

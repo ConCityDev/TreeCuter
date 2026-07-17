@@ -181,6 +181,7 @@ public class TreeCutService {
         if(treeCutEvent.isCancelled()){
             return;
         }
+
         GlowUtils.unsetGlowing(blocks, p);
 
         //create task to break blocks
@@ -188,7 +189,8 @@ public class TreeCutService {
         breakTasks.add(breakTask);
 
         int size = blocks.size();
-        updateItem(p, size - 1);
+        // Update item with 1 usage (not block count), to track how many times the tool was used
+        updateItem(p, 1);
 
         selectedMap.remove(p.getUniqueId());
 
@@ -239,6 +241,7 @@ public class TreeCutService {
         }
 
         ItemStack itemStack = DurabilityUtils.updateDurability(itemInHand, durabilityDamage);
+
 
         inventory.setItemInMainHand(itemStack);
     }

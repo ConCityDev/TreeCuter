@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.6.0'
 }
 
 group = 'pl.norbit'
@@ -27,12 +27,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT"
+    compileOnly "io.papermc.paper:paper-api:26.1.2.build.74-stable"
     compileOnly files('libs/CoreProtect-CE-23.0.jar')
     //bstats
-    implementation 'org.bstats:bstats-bukkit:3.1.0'
+    implementation 'org.bstats:bstats-bukkit:3.2.1'
     //glowing
-    implementation 'fr.skytasul:glowingentities:1.4.8'
+    implementation 'fr.skytasul:glowingentities:2.0.0'
     //worldguard
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     //itemsadder
@@ -40,22 +40,37 @@ dependencies {
 
     compileOnly 'me.clip:placeholderapi:2.11.6'
     //lombok
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok:1.18.46'
+    annotationProcessor 'org.projectlombok:lombok:1.18.46'
 }
 
 compileJava {options.encoding = "UTF-8"}
 
-def targetJavaVersion = 17
+def targetJavaVersion = 25
 
 shadowJar {
-    relocate 'org.bstats', 'pl.norbit.treecuter'
+    // Relocate bstats to avoid conflicts
+    relocate 'org.bstats', 'pl.norbit.treecuter.libs.bstats'
+    // Relocate glowing entities to avoid conflicts
+    relocate 'fr.skytasul.glowingentities', 'pl.norbit.treecuter.libs.glowingentities'
+
     archiveClassifier.set("")
+
+    // Minimize the jar to only include used classes, but exclude bstats
+    minimize {
+        // Don't minimize bstats as it uses reflection
+        exclude(dependency('org.bstats:.*:.*'))
+    }
+}
+
+// Make build task depend on shadowJar
+tasks.build {
+    dependsOn shadowJar
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 

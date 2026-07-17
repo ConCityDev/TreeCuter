@@ -8,6 +8,8 @@ import pl.norbit.treecuter.config.Settings;
 import pl.norbit.treecuter.config.model.CutShape;
 import pl.norbit.treecuter.service.EffectService;
 import pl.norbit.treecuter.service.TreeCutService;
+import pl.norbit.treecuter.utils.ChatUtils;
+import pl.norbit.treecuter.utils.ToolUsageUtils;
 
 public class BlockBreakListener implements Listener {
 
@@ -29,6 +31,12 @@ public class BlockBreakListener implements Listener {
         }
 
         var item = p.getInventory().getItemInMainHand();
+
+        // Check if tool has usage rights and if they are depleted
+        if(ToolUsageUtils.hasUsageRights(item) && !ToolUsageUtils.hasRemainingUsage(item)){
+            p.sendMessage(ChatUtils.format(Settings.getToolNoUsage()));
+            return;
+        }
 
         CutShape woodBlocks = Settings.getCutShape(b, item);
 

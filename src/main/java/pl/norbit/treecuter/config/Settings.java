@@ -109,6 +109,23 @@ public class Settings {
     private static String toolGet;
     @Getter
     private static String toolNotFound;
+    @Getter
+    private static String toolNoUsage;
+    @Getter
+    private static String toolUsageInfo;
+    @Getter
+    private static String toolUsageLore;
+
+    @Getter
+    private static String giveUsage;
+    @Getter
+    private static String giveInvalidMax;
+    @Getter
+    private static String giveInvalidUsed;
+    @Getter
+    private static String givePlayerNotFound;
+    @Getter
+    private static String giveSuccess;
 
     @Getter
     private static List<String> helpMessage;
@@ -131,6 +148,20 @@ public class Settings {
                 .filter(shape -> shape.getId().equalsIgnoreCase(key))
                 .filter(shape -> shape.getCustomTool() != null)
                 .map(CutShape::getCustomToolItem)
+                .findFirst();
+    }
+
+    public static Optional<ItemStack> getCustomToolForKey(String key, int maxUsage, int usedUsage){
+        return woodBlocks.stream()
+                .filter(shape -> shape.getId().equalsIgnoreCase(key))
+                .filter(shape -> shape.getCustomTool() != null)
+                .map(shape -> {
+                    if(maxUsage > 0) {
+                        return shape.getCustomTool().getItemStackWithUsage(maxUsage, usedUsage);
+                    } else {
+                        return shape.getCustomToolItem();
+                    }
+                })
                 .findFirst();
     }
 
@@ -171,6 +202,16 @@ public class Settings {
 
     public static boolean isGround(Material type){
         return groundBlocks.contains(type);
+    }
+
+    public static boolean isCustomTool(ItemStack item){
+        if(item == null || item.getType().isAir()){
+            return false;
+        }
+
+        return woodBlocks.stream()
+                .filter(shape -> shape.getCustomTool() != null)
+                .anyMatch(shape -> shape.getCustomTool().isSimilar(item));
     }
 
     public static void loadConfig(boolean reload) {
@@ -259,10 +300,18 @@ public class Settings {
         toggleMessageOn = config.getString("messages.toggle.enable");
         toggleMessageOff = config.getString("messages.toggle.disable");
         consoleMessage = config.getString("messages.console");
+        toolNoUsage = config.getString("messages.tool.no-usage");
+        toolUsageInfo = config.getString("messages.tool.usage-info");
+        toolUsageLore = config.getString("messages.tool.usage-lore");
         reloadStart = config.getString("messages.reload.start");
         reloadEnd = config.getString("messages.reload.end");
         toolGet = config.getString("messages.tool.get");
         toolNotFound = config.getString("messages.tool.not-found");
+        giveUsage = config.getString("messages.give.usage");
+        giveInvalidMax = config.getString("messages.give.invalid-max");
+        giveInvalidUsed = config.getString("messages.give.invalid-used");
+        givePlayerNotFound = config.getString("messages.give.player-not-found");
+        giveSuccess = config.getString("messages.give.success");
         helpMessage = config.getStringList("messages.help");
 
         groundBlocks = config.getStringList("sapling-ground-materials")
@@ -342,6 +391,11 @@ public class Settings {
         customTool.setName(section.getString("name"));
         customTool.setMaterial(section.getString("material"));
         customTool.setLore(section.getStringList("lore"));
+
+        // Load custom model data if present
+        if (section.contains("custom-model-data")) {
+            customTool.setCustomModelData(section.getInt("custom-model-data"));
+        }
 
         return customTool;
     }

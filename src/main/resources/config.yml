@@ -26,8 +26,14 @@ messages:
     - '&8[&m------------------------------------------------]'
     - ''
     - ' &8&l» &8/&atreecuter reload &8- &7reload plugin!'
-    - ' &8&l» &8/&atreecuter get <id> &8- &7get tool!'
+    - ' &8&l» &8/&atreecuter get <id> [maxUsage] [usedUsage] &8- &7get tool!'
+    - ' &8&l» &8/&atreecuter give <player> <id> [maxUsage] [usedUsage] &8- &7give tool!'
     - ' &8&l» &8/&atreecuter toggle &8- &7on/off!'
+    - ''
+    - ' &eExamples:'
+    - ' &7/treecuter get normal &8- &7Get unlimited tool'
+    - ' &7/treecuter get normal 100 0 &8- &7Get tool with 100 uses'
+    - ' &7/treecuter give Notch nether 50 10 &8- &7Give nether tool to Notch'
     - ''
     - '&8[&m------------------------------------------------]'
   reload:
@@ -36,6 +42,15 @@ messages:
   tool:
     get: '&a&l» &7You got tool!'
     not-found: '&c&l» &7Tool not found!'
+    no-usage: '&c&l» &7This tool has no usage rights left!'
+    usage-info: '&e&l» &7Usage: {used}/{max}'
+    usage-lore: '&7Remaining usage: &e{remaining}&7/&e{max}'
+  give:
+    usage: '&c&l» &7Usage: /treecuter give <player> <tool_id> [maxUsage] [usedUsage]'
+    invalid-max: '&c&l» &7Invalid max usage value!'
+    invalid-used: '&c&l» &7Invalid used usage value!'
+    player-not-found: '&c&l» &7Player not found!'
+    success: '&a&l» &7Tool given to {player}!'
   toggle:
     enable: '&a&l» &7Enabled cutting down trees!'
     disable: '&c&l» &7Disabled cutting down trees!'
@@ -106,11 +121,12 @@ placeholder:
 wood-blocks:
   nether:
     glowing-color: 'gold' # overwrites color set in glowing-color, if not set uses default
-#    custom-tool:  You can add custom tool for wood types
-#      material: 'NETHERITE_AXE'
-#      name: '&c&lNETHER AXE'
-#      lore:
-#      - '&7This is a custom tool!'
+    custom-tool:  # Custom tool for nether wood types
+      material: 'NETHERITE_AXE'
+      name: '&c&lNether Tree Cutter'
+      lore:
+      - '&7Special axe for nether trees!'
+      - '&7Works on Warped and Crimson stems'
     accept-tools:
       - 'NETHERITE_AXE'
     accept-blocks:
@@ -120,6 +136,31 @@ wood-blocks:
     - 'CRIMSON_HYPHAE'
   normal:
     glowing-color: 'aqua' # overwrites color set in glowing-color, if not set uses default
+    custom-tool:  # Custom tool for normal wood types
+      material: 'DIAMOND_AXE'
+      name: '&b&lTree Cutter Axe'
+      lore:
+      - '&7Special axe for cutting trees!'
+      - '&7Right click to see tree outline'
+      custom-model-data: 1001 # Optional: Add custom model data for resource pack
+
+      # For ItemsAdder items, use this format:
+      # material: 'ia:your_item_id'
+      # or
+      # material: 'itemsadder:your_item_id'
+
+      # Example with ItemsAdder:
+      # material: 'ia:ruby_axe'
+      # name: '&c&lRuby Tree Cutter' # Optional: Override ItemsAdder name
+      # lore: # Optional: Override or add to ItemsAdder lore
+      # - '&7Custom lore line 1'
+      # - '&7Custom lore line 2'
+
+      # NOTE: When using usage rights (maxUsage parameter in /treecuter get command):
+      # - Item durability bar will show remaining usage percentage
+      # - Item will NOT take normal durability damage
+      # - Durability is ONLY used for visual representation
+      # - Usage rights are tracked separately via persistent data
     accept-tools:
     - 'WOODEN_AXE'
     - 'STONE_AXE'
