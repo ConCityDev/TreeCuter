@@ -46,9 +46,8 @@ dependencies {
     compileOnly("net.coreprotect:coreprotect:23.2")
     //bstats
     implementation 'org.bstats:bstats-bukkit:3.2.1'
-    //glowing (bundled SCore build - the published glowingentities artifact
-    //doesn't track new Minecraft versions fast enough, see GlowUtils.java)
-    implementation files('libs/SCore-5.26.7.5.jar')
+    //glowing
+    implementation 'fr.skytasul:glowingentities:2.0.0'
     //worldguard
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     //itemsadder
@@ -65,6 +64,8 @@ dependencies {
     compileOnly('net.momirealms:craft-engine-bukkit:26.7.1')
 
     compileOnly('io.th0rgal:oraxen:1.163.0:dev')
+    //executableitems api (provided by the ExecutableItems plugin at runtime)
+    compileOnly files('libs/SCore-5.26.7.5.jar')
 }
 
 compileJava {options.encoding = "UTF-8"}
