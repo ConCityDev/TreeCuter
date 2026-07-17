@@ -8,41 +8,44 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.norbit.treecuter.config.Settings;
 import pl.norbit.treecuter.exception.GlowException;
+import pl.norbit.treecuter.libs.skytasul.reflection.Version;
 import pl.norbit.treecuter.model.GlowBlock;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GlowUtils {
     private static final Map<Player, GlowBlock> blocks = new ConcurrentHashMap<>();
-    private static final List<String> supportedGlowingVersions =
-            List.of("1.17.1", "1.18.2", "1.19.4", "1.20.2", "1.20.4", "1.20.5", "1.20.6", "1.21.1"," 1.21.2",
-                    "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10");
+    private static final List<Version> supportedGlowingVersions =
+            List.of(Version.parseArray("1.17.1", "1.18.2", "1.19.4", "1.20.2", "1.20.4", "1.20.5", "1.20.6", "1.21.1", "1.21.2",
+                    "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
+                    "26.1", "26.1.1", "26.1.2", "26.2"));
     private static GlowingBlocks glowingBlocks;
     private static boolean enable;
 
-    private GlowUtils() {
-        throw new IllegalStateException("This class cannot be instantiated");
-    }
+    private GlowUtils() {}
 
     public static boolean isSupportedVersion(String version){
-        return supportedGlowingVersions.stream()
-                .filter(version::contains)
-                .findFirst()
-                .orElse(null) != null;
+        Version parsedVersion = Version.parseOrNull(version);
+        if (parsedVersion == null) {
+            return false;
+        }
+        return supportedGlowingVersions.contains(parsedVersion);
     }
 
     public static void init(JavaPlugin instance){
         Server server = instance.getServer();
 
-        if(isSupportedVersion(server.getVersion())) enable = true;
+        if(isSupportedVersion(server.getBukkitVersion())) enable = true;
 
         try {
             glowingBlocks = new GlowingBlocks(instance);
         } catch (Exception e) {
             enable = false;
+            instance.getLogger().log(Level.WARNING,"Failed to initialize GlowingBlocks, disabling glowing blocks feature. Reason: " + e.getMessage());
         }
 
         if(enable){

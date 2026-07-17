@@ -1,7 +1,7 @@
 name: ConCityTreeCuter
 version: '${version}'
 main: pl.norbit.treecuter.TreeCuter
-api-version: 1.17
+api-version: 1.21
 author: Norbit4
 website: 'https://github.com/Norbit4'
 softdepend:
@@ -9,6 +9,10 @@ softdepend:
   - ItemsAdder
   - PlaceholderAPI
   - CoreProtect
+  - ExecutableItems
+  - SCore
+  - CraftEngine
+  - Oraxen
 commands:
   treecuter:
     aliases:

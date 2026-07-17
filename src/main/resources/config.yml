@@ -65,36 +65,40 @@ max-blocks: 150
 # min blocks to cut at once
 min-blocks: 4
 
+# Beta feature - may not work correctly.
+# Checks if leaves are present near the top part of the detected tree.
+# Prevents cutting player-built log structures.
+check-natural-tree: true
+
 # if true, the player must hold shift to cut down trees
 shift-mining: true # true <- recommended
 
-# apply mining fatigue effect when player is cutting down trees
+# apply mining fatigue effect when a player is cutting down trees
 # works only with shift-mining enabled!
 mining-effect:
   enable: true # true <- recommended
   hide: true # true <- recommended, hide particles of effect
   default-level: 1
 
-# actions to execute after cutting down a tree
-actions:
-  enable: false
-  # list of actions to execute
-  action-list:
-    - "say {player} cut a tree logs: {count}"
+# if true, blocks that have been cut off will glow
 
-# if true, blocks that have been cut off, will glow
-
+# [!]
 # [!]                                                                                                               [!]
-# [!] GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS: 1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21 [!]
-# [!]                                                                                                               [!]                                                                                    [!]
+# [!]       GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS:                                                        [!]
+# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11, 26.1.x, 26.2                                    [!]
+# [!]                                                                                                               [!]
+# [!]                                                                                                                     [!]                                                                                  [!]
 
 glowing-blocks: true
 # colors: black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple, gold, gray,
 #         dark_gray, blue, green, aqua, red, magenta, light_purple, yellow, white
 glowing-color: 'yellow'
 
+# [!]
 # [!]                                                                                                               [!]
-# [!] GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS: 1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21 [!]
+# [!]       GLOWING - SUPPORTS ONLY PAPER OR FORKS VERSIONS:                                                        [!]
+# [!]       1.17.1, 1.18.2, 1.19.4, 1.20.2, 1.20.4, 1.20.5, 1.20.6, 1.21-1.21.11, 26.1.x, 26.2                                    [!]
+# [!]                                                                                                               [!]
 # [!]                                                                                                               [!]
 
 # cut blocks automatically go to player inventory
@@ -110,7 +114,7 @@ block-worlds:
 # speed up leaf decay
 leaves:
   enable: true
-  # amount of leaves decay every 5 ticks
+  # number of leaves decay every 5 ticks
   decay-amount: 2
 
 # %treecuter_toggle% (PlaceholderAPI)
@@ -164,11 +168,16 @@ wood-blocks:
     accept-tools:
     - 'WOODEN_AXE'
     - 'STONE_AXE'
+    - 'COPPER_AXE'
     - 'IRON_AXE'
     - 'GOLDEN_AXE'
     - 'DIAMOND_AXE'
     - 'NETHERITE_AXE'
     # - 'ia:example_item_id' # example for ItemsAdder
+    # - 'nexo:example_item_id' # example for Nexo
+    # - 'ce:example_item_id' # example for CraftEngine
+    # - 'ei:example_item_id' # example for ExecutableItems
+    # - 'oraxen:example_item_id' # example for Oraxen
     accept-blocks:
     - 'OAK_LOG'
     - 'SPRUCE_LOG'
@@ -189,6 +198,8 @@ wood-blocks:
     - 'MANGROVE_WOOD'
     - 'CHERRY_WOOD'
     - 'PALE_OAK_WOOD'
+    # - 'ia:example_item_id' # example for ItemsAdder
+    # - 'nexo:example_item_id' # example for Nexo
 
 accept-leaves-blocks:
   - 'OAK_LEAVES'
@@ -207,6 +218,8 @@ accept-custom-leaves-blocks:
   - 'NETHER_WART_BLOCK'
   - 'WARPED_WART_BLOCK'
   - 'SHROOMLIGHT'
+  # - 'ia:example_item_id' # example for ItemsAdder
+  # - 'nexo:example_item_id' # example for Nexo
 
 auto-plant-saplings:
   - 'OAK_SAPLING'
@@ -227,3 +240,52 @@ sapling-ground-materials:
   - 'PODZOL'
   - 'MYCELIUM'
   - 'COARSE_DIRT'
+
+# actions to execute after cutting down a tree
+#  {player} - player name
+#  {count} - number of cut blocks
+#  {shape} - shape id of a cut tree
+actions:
+  enable: false
+  # list of commands to execute
+  action-list:
+    global:
+      - "say {player} cut a tree logs: {count} id: {shape}"
+    # per wood type actions
+    types:
+      OAK_LOG:
+        - "say {player} cut an oak tree with {count} logs!"
+      OAK_WOOD:
+        - "say {player} cut an oak tree with {count} logs!"
+      SPRUCE_LOG:
+        - "say {player} cut a spruce tree with {count} logs!"
+      SPRUCE_WOOD:
+        - "say {player} cut a spruce tree with {count} logs!"
+      BIRCH_LOG:
+        - "say {player} cut a birch tree with {count} logs!"
+      BIRCH_WOOD:
+        - "say {player} cut a birch tree with {count} logs!"
+      JUNGLE_LOG:
+        - "say {player} cut a jungle tree with {count} logs!"
+      JUNGLE_WOOD:
+        - "say {player} cut a jungle tree with {count} logs!"
+      ACACIA_LOG:
+        - "say {player} cut an acacia tree with {count} logs!"
+      ACACIA_WOOD:
+        - "say {player} cut an acacia tree with {count} logs!"
+      DARK_OAK_LOG:
+        - "say {player} cut a dark oak tree with {count} logs!"
+      DARK_OAK_WOOD:
+        - "say {player} cut a dark oak tree with {count} logs!"
+      MANGROVE_LOG:
+        - "say {player} cut a mangrove tree with {count} logs!"
+      MANGROVE_WOOD:
+        - "say {player} cut a mangrove tree with {count} logs!"
+      CHERRY_LOG:
+        - "say {player} cut a cherry tree with {count} logs!"
+      CHERRY_WOOD:
+        - "say {player} cut a cherry tree with {count} logs!"
+      PALE_OAK_LOG:
+        - "say {player} cut a pale oak tree with {count} logs!"
+      PALE_OAK_WOOD:
+        - "say {player} cut a pale oak tree with {count} logs!"

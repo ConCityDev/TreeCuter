@@ -1,5 +1,6 @@
 package pl.norbit.treecuter.config.model;
 
+import dev.lone.itemsadder.api.CustomStack;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +25,8 @@ public class CustomTool {
         if (material != null && (material.startsWith("ia:") || material.startsWith("itemsadder:"))) {
             if (Settings.isItemsAdderEnabled()) {
                 String itemId = material.contains(":") ? material.split(":", 2)[1] : material;
-                ItemStack iaItem = ItemsAdderUtils.getItem(itemId).orElse(null);
+                CustomStack stack = CustomStack.getInstance(itemId);
+                ItemStack iaItem = stack != null ? stack.getItemStack().clone() : null;
 
                 if (iaItem != null) {
                     // Apply custom name and lore if specified
@@ -88,10 +90,7 @@ public class CustomTool {
         if (material != null && (material.startsWith("ia:") || material.startsWith("itemsadder:"))) {
             if (Settings.isItemsAdderEnabled()) {
                 String itemId = material.contains(":") ? material.split(":", 2)[1] : material;
-                ItemStack iaItem = ItemsAdderUtils.getItem(itemId).orElse(null);
-                if (iaItem != null) {
-                    return item.getType() == iaItem.getType();
-                }
+                return ItemsAdderUtils.isEqualItem(item, itemId);
             }
             return false;
         }

@@ -1,51 +1,30 @@
 package pl.norbit.treecuter.utils.item;
 
+import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
-
 public class ItemsAdderUtils {
-    private ItemsAdderUtils() {
-        throw new IllegalStateException("This class cannot be instantiated");
+    private ItemsAdderUtils() {}
+
+    public static void iaBreak(Block b){
+        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(b);
+
+        if(customBlock != null){
+            CustomBlock.remove(b.getLocation());
+        }else {
+            b.breakNaturally();
+        }
     }
 
+    public static boolean isEqualBlock(Block b, String id) {
+        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(b);
 
-    public static int checkRemainUses(ItemStack itemStack) {
-        CustomStack stack = CustomStack.byItemStack(itemStack);
-
-        if(stack == null){
-            return -1; // Not an ItemsAdder item
+        if(customBlock == null){
+            return false;
         }
-
-        return stack.getDurability();
-    }
-
-    public static ItemStack updateDurability(ItemStack itemStack, int dmg) {
-        CustomStack stack = CustomStack.byItemStack(itemStack);
-
-        if(stack == null){
-            return null;
-        }
-
-        stack.setDurability(stack.getDurability() - dmg);
-
-        return stack.getItemStack();
-    }
-
-    /**
-     * Get itemsadder item by id
-     * @param id Item id
-     * @return Optional of ItemStack
-     */
-    public static Optional<ItemStack> getItem(String id){
-        CustomStack stack = CustomStack.getInstance(id);
-
-        if(stack == null){
-            return Optional.empty();
-        }
-
-        return Optional.of(stack.getItemStack());
+        return id.equals(customBlock.getId());
     }
 
     /**
@@ -54,8 +33,7 @@ public class ItemsAdderUtils {
      * @param id Item id
      * @return True if ItemStack is equal to ItemsAdder item
      */
-
-    public static boolean isEqual(ItemStack item, String id) {
+    public static boolean isEqualItem(ItemStack item, String id) {
         CustomStack stack = CustomStack.getInstance(id);
 
         if(stack == null){

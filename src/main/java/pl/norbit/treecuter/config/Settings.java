@@ -11,9 +11,12 @@ import pl.norbit.treecuter.TreeCuter;
 import pl.norbit.treecuter.config.model.CustomItem;
 import pl.norbit.treecuter.config.model.CustomTool;
 import pl.norbit.treecuter.config.model.CutShape;
-import pl.norbit.treecuter.service.TreePlanterService;
+import pl.norbit.treecuter.service.EffectService;
+import pl.norbit.treecuter.treeplant.TreePlanterService;
+import pl.norbit.treecuter.utils.item.MaterialMatcherUtils;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class Settings {
 
@@ -36,11 +39,29 @@ public class Settings {
 
     @Getter
     @Setter
+    private static boolean oraxenEnabled;
+
+    @Getter
+    @Setter
+    private static boolean craftEngineEnabled;
+
+    @Getter
+    @Setter
+    private static boolean executableItemsEnabled;
+
+    @Getter
+    @Setter
+    private static boolean nexoAdderEnabled;
+
+    @Getter
+    @Setter
     private static boolean placeholderApiEnabled;
 
     //settings
     @Getter
     private static boolean shiftMining;
+    @Getter
+    private static boolean checkNaturalTree;
     @Getter
     private static boolean applyMiningEffect;
     @Getter
@@ -62,11 +83,14 @@ public class Settings {
     @Getter
     private static List<Material> acceptWoodBlocks;
     @Getter
-    private static List<Material> acceptLeavesBlocks;
+    private static List<String> acceptLeavesBlocks;
     @Getter
-    private static List<Material> acceptCustomLeavesBlocks;
+    private static List<String> acceptCustomLeavesBlocks;
     @Getter
     private static List<Material> autoPlantSapling;
+
+    @Getter
+    private static Map<Material, List<String>> actionsTypeMap;
 
     //block worlds
     private static List<String> blockWorlds;
@@ -91,7 +115,6 @@ public class Settings {
     //messages
     @Getter
     private static String permissionMessage;
-
     @Getter
     private static String toggleMessageOn;
     @Getter
@@ -143,6 +166,11 @@ public class Settings {
         throw new IllegalStateException("This class cannot be instantiated");
     }
 
+
+    public static List<String> getActions(Material material){
+        return actionsTypeMap.getOrDefault(material, List.of());
+    }
+
     public static Optional<ItemStack> getCustomToolForKey(String key){
         return woodBlocks.stream()
                 .filter(shape -> shape.getId().equalsIgnoreCase(key))
@@ -167,7 +195,7 @@ public class Settings {
 
     public static CutShape getCutShape(Block block, ItemStack tool){
         return woodBlocks.stream()
-                .filter(woodBlock -> woodBlock.isAcceptBlock(block.getType()))
+                .filter(woodBlock -> woodBlock.isAcceptBlock(block))
                 .filter(woodBlock -> woodBlock.isAcceptTool(tool))
                 .findFirst()
                 .orElse(null);
@@ -188,8 +216,13 @@ public class Settings {
         return acceptWoodBlocks.contains(type);
     }
 
-    public static boolean isAcceptedCustomLeavesBlock(Material type){
-        return acceptCustomLeavesBlocks.contains(type);
+    public static boolean isAcceptedCustomLeavesBlock(Block b){
+        for (String blockId : acceptCustomLeavesBlocks) {
+            if(MaterialMatcherUtils.isEqual(b, blockId)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isAcceptedTool(Material type){
@@ -224,6 +257,7 @@ public class Settings {
 
         maxBlocks = config.getInt("max-blocks");
         minBlocks = config.getInt("min-blocks");
+        checkNaturalTree = config.getBoolean("check-natural-tree");
 
         shiftMining = config.getBoolean("shift-mining");
 
@@ -245,7 +279,7 @@ public class Settings {
         placeholderToggleOn = config.getString("placeholder.toggle-on");
         placeholderToggleOff = config.getString("placeholder.toggle-off");
 
-        actions = config.getStringList("actions.action-list");
+        actions = config.getStringList("actions.action-list.global");
         actionsEnabled = config.getBoolean("actions.enable");
 
         acceptTools = new ArrayList<>();
@@ -267,17 +301,21 @@ public class Settings {
                 .filter(Objects::nonNull)
                 .forEach(acceptWoodBlocks::add);
 
-        config.getStringList("accept-leaves-blocks")
-                .stream()
-                .map(Material::getMaterial)
-                .filter(Objects::nonNull)
-                .forEach(acceptLeavesBlocks::add);
+        acceptLeavesBlocks = config.getStringList("accept-leaves-blocks");
 
-        config.getStringList("accept-custom-leaves-blocks")
-                .stream()
-                .map(Material::getMaterial)
-                .filter(Objects::nonNull)
-                .forEach(acceptCustomLeavesBlocks::add);
+//        config.getStringList("accept-leaves-blocks")
+//                .stream()
+//                .map(Material::getMaterial)
+//                .filter(Objects::nonNull)
+//                .forEach(acceptLeavesBlocks::add);
+
+        acceptCustomLeavesBlocks = config.getStringList("accept-custom-leaves-blocks");
+
+//        config.getStringList("accept-custom-leaves-blocks")
+//                .stream()
+//                .map(Material::getMaterial)
+//                .filter(Objects::nonNull)
+//                .forEach(acceptCustomLeavesBlocks::add);
 
         config.getStringList("auto-plant-saplings")
                 .stream()
@@ -323,6 +361,7 @@ public class Settings {
 
         ConfigurationSection section = config.getConfigurationSection("wood-blocks");
 
+
         if (section == null) {
             javaPlugin.getLogger().warning("No wood blocks found in config");
         }else {
@@ -339,9 +378,36 @@ public class Settings {
             }
         }
 
+        loadActionsTypes(config.getConfigurationSection("actions.action-list.types"));
+
         if(autoPlant) TreePlanterService.start();
         else TreePlanterService.stop();
+
+        EffectService.reloadEffect();
     }
+
+    public static void loadActionsTypes(ConfigurationSection section) {
+        actionsTypeMap = new EnumMap<>(Material.class);
+
+        if (section == null) {
+            return;
+        }
+
+        Logger logger = TreeCuter.getInstance().getLogger();
+
+        for (String key : section.getKeys(false)) {
+            Material material = Material.getMaterial(key.toUpperCase());
+
+            if (material == null) {
+                logger.warning("Wrong action material: " + key);
+                continue;
+            }
+
+            List<String> commands = section.getStringList(key);
+            actionsTypeMap.put(material, commands);
+        }
+    }
+
 
     private static CutShape getCutShape(ConfigurationSection section, String key) {
         CutShape cutShape = new CutShape();
@@ -374,12 +440,14 @@ public class Settings {
             cutShape.setCustomTool(customTool);
         }
 
-        List<Material> acceptBlocks = new ArrayList<>();
-        section.getStringList("accept-blocks")
-                .stream()
-                .map(Material::getMaterial)
-                .filter(Objects::nonNull)
-                .forEach(acceptBlocks::add);
+//        List<Material> acceptBlocks = new ArrayList<>();
+//        section.getStringList("accept-blocks")
+//                .stream()
+//                .map(Material::getMaterial)
+//                .filter(Objects::nonNull)
+//                .forEach(acceptBlocks::add);
+
+        List<String> acceptBlocks = section.getStringList("accept-blocks");
 
         cutShape.setAcceptBlocks(acceptBlocks);
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'pl.norbit'
-version = 'v2.0.1'
+version = 'v2.4.0'
 
 repositories {
     mavenCentral()
@@ -24,24 +24,47 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
+    maven {
+        name "nexomcReleases"
+        url "https://repo.nexomc.com/releases"
+    }
+    maven {
+        name = "playpro-repo"
+        url = uri("https://maven.playpro.com")
+    }
+    maven {
+        url =  'https://repo.momirealms.net/releases/'
+    }
+    maven {
+        url =  'https://repo.oraxen.com/releases'
+    }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:26.1.2.build.74-stable"
-    compileOnly files('libs/CoreProtect-CE-23.0.jar')
+    //coreprotect
+    compileOnly("net.coreprotect:coreprotect:23.2")
     //bstats
     implementation 'org.bstats:bstats-bukkit:3.2.1'
-    //glowing
-    implementation 'fr.skytasul:glowingentities:2.0.0'
+    //glowing (bundled SCore build - the published glowingentities artifact
+    //doesn't track new Minecraft versions fast enough, see GlowUtils.java)
+    implementation files('libs/SCore-5.26.7.5.jar')
     //worldguard
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     //itemsadder
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.6.2-beta-r3-b'
-
+    //nexo
+    compileOnly "com.nexomc:nexo:1.21.0"
+    //papi
     compileOnly 'me.clip:placeholderapi:2.11.6'
     //lombok
     compileOnly 'org.projectlombok:lombok:1.18.46'
     annotationProcessor 'org.projectlombok:lombok:1.18.46'
+
+    compileOnly('net.momirealms:craft-engine-core:26.7.1')
+    compileOnly('net.momirealms:craft-engine-bukkit:26.7.1')
+
+    compileOnly('io.th0rgal:oraxen:1.163.0:dev')
 }
 
 compileJava {options.encoding = "UTF-8"}
@@ -49,23 +72,12 @@ compileJava {options.encoding = "UTF-8"}
 def targetJavaVersion = 25
 
 shadowJar {
-    // Relocate bstats to avoid conflicts
     relocate 'org.bstats', 'pl.norbit.treecuter.libs.bstats'
-    // Relocate glowing entities to avoid conflicts
-    relocate 'fr.skytasul.glowingentities', 'pl.norbit.treecuter.libs.glowingentities'
-
+    relocate 'fr.skytasul.glowingentities', 'pl.norbit.treecuter.libs.skytasul.glowingentities'
+    exclude "fr/skytasul/reflection/Version*.class"
+    relocate 'fr.skytasul.reflection', 'pl.norbit.treecuter.libs.skytasul.reflection'
     archiveClassifier.set("")
-
-    // Minimize the jar to only include used classes, but exclude bstats
-    minimize {
-        // Don't minimize bstats as it uses reflection
-        exclude(dependency('org.bstats:.*:.*'))
-    }
-}
-
-// Make build task depend on shadowJar
-tasks.build {
-    dependsOn shadowJar
+    mergeServiceFiles()
 }
 
 java {
@@ -89,10 +101,21 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+build {
+    dependsOn shadowJar
+}
+
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*'
+    }
+
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
+
     filesMatching('plugin.yml') {
         expand props
     }

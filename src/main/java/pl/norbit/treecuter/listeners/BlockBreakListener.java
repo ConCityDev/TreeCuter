@@ -1,9 +1,14 @@
 package pl.norbit.treecuter.listeners;
 
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
 import pl.norbit.treecuter.config.Settings;
 import pl.norbit.treecuter.config.model.CutShape;
 import pl.norbit.treecuter.service.EffectService;
@@ -15,10 +20,16 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent e) {
-        var b = e.getBlock();
-        var p = e.getPlayer();
+        Block b = e.getBlock();
+        Player p = e.getPlayer();
+        Material type = b.getType();
 
         if (e.isCancelled()){
+            return;
+        }
+
+        //block custom blocks
+        if(type == Material.NOTE_BLOCK){
             return;
         }
 
@@ -30,7 +41,7 @@ public class BlockBreakListener implements Listener {
             return;
         }
 
-        var item = p.getInventory().getItemInMainHand();
+        ItemStack item = p.getInventory().getItemInMainHand();
 
         // Check if tool has usage rights and if they are depleted
         if(ToolUsageUtils.hasUsageRights(item) && !ToolUsageUtils.hasRemainingUsage(item)){
@@ -38,12 +49,12 @@ public class BlockBreakListener implements Listener {
             return;
         }
 
-        CutShape woodBlocks = Settings.getCutShape(b, item);
+        CutShape shape = Settings.getCutShape(b, item);
 
-        if (woodBlocks == null){
+        if (shape == null) {
             return;
         }
 
-        TreeCutService.cutTree(p);
+        TreeCutService.cutTree(p, shape);
     }
 }
